@@ -1,0 +1,12 @@
+pkey,device_name,device_type,device_model,site_name,creatDate,updatDate,epocTimestamp,status,GameX
+1,Colt_NW_Cloud,router,NCS55A13,Spain,10/04/20205 13:10,11/04/20205 13:10,256810383,In Use,Yes
+2,Cisco_R1_Riyadh,router,NCS55A1,Riyadh,,,,In Use,
+3,Cisco_R2_Madrid,router,NCS55A1,Madrid,,,,In Use,Yes
+4,Cisco_R3_Dubai,router,NCS55A1,Dubai,,,,Faulty,
+5,Cisco_R4_Jeddah,router,NCS55A1,Jeddah,,,,,
+6,Accedian_P1_Customer,Probe,,,,,,,
+7,Accedian_P2_Cisco,Probe,,,,,,,
+8,Accedian_P2_AWS,Probe,,,,,,,
+9,AWS_NW_Cloud,Cloud,,,,,,,
+10,AWS_GameLift_Cloud,Cloud,,,,,,,
+11,STC_NW_Cloud,Cloud,,,,,,,
