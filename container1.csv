@@ -1,0 +1,27 @@
+pkey,device_name,device_type,device_model
+1,leaf1,router,NCS55A1
+2,leaf2,router,NCS55A1
+3,leaf3,router,NCS55A1
+4,leaf4,router,NCS55A1
+5,leaf5,router,NCS55A1
+6,leaf6,router,NCS55A1
+7,leaf7,router,NCS55A1
+8,leaf8,router,NCS55A1
+9,spine1,router,NCS55A1
+10,spine2,router,NCS55A1
+11,spine3,router,NCS55A1
+12,spine4,router,NCS55A1
+13,dr01,edge router,NCS5508
+14,dr02,edge router,NCS5508
+15,dr03,edge router,NCS5508
+16,rswa3b,switch,Nexus3K
+17,rswa4b,switch,Nexus3K
+18,rswa5b,switch,Nexus3K
+19,rswa6b,switch,Nexus3K
+20,rswa3a,switch,Nexus3K
+21,rswa4a,switch,Nexus3K
+22,rswa5a,switch,Nexus3K
+23,rswa6a,switch,Nexus3K
+24,rswa2,switch,Nexus3K
+25,rswb1,switch,Nexus9K
+26,sswb3,switch,Nexus9K
