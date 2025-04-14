@@ -1,0 +1,11 @@
+﻿device_name,Interface,Bandwidth,interface_ciname ,remote_interface,remote_device,remote_interface_ciname,path_name
+Colt_NW_Cloud,Hu0/0/0/0,100Gbps,Colt_NW_Cloud/Hu0/0/0/0,Hu0/0/0/0,Cisco_R1_Riyadh,Cisco_R1_Riyadh/Hu0/0/0/0,Colt_NW_Cloud/Hu0/0/0/0_Cisco_R1_Riyadh/Hu0/0/0/0
+Colt_NW_Cloud,Hu0/0/0/1,100Gbps,Colt_NW_Cloud/Hu0/0/0/1,Hu0/0/0/1,Cisco_R1_Riyadh,Cisco_R1_Riyadh/Hu0/0/0/1,Colt_NW_Cloud/Hu0/0/0/1_Cisco_R1_Riyadh/Hu0/0/0/1
+Colt_NW_Cloud,Hu0/0/0/2,100Gbps,Colt_NW_Cloud/Hu0/0/0/2,Hu0/0/0/1,Cisco_R2_Madrid,Cisco_R2_Madrid/Hu0/0/0/1,Colt_NW_Cloud/Hu0/0/0/2_Cisco_R2_Madrid/Hu0/0/0/1
+Colt_NW_Cloud,Hu0/0/0/4,100Gbps,Colt_NW_Cloud/Hu0/0/0/4,Hu0/0/0/0,Cisco_R3_Dubai,Cisco_R3_Dubai/Hu0/0/0/0,Colt_NW_Cloud/Hu0/0/0/4_Cisco_R3_Dubai/Hu0/0/0/0
+Colt_NW_Cloud,Hu0/0/0/5,100Gbps,Colt_NW_Cloud/Hu0/0/0/5,Hu0/0/0/1,Cisco_R4_Jeddah,Cisco_R4_Jeddah/Hu0/0/0/1,Colt_NW_Cloud/Hu0/0/0/5_Cisco_R4_Jeddah/Hu0/0/0/1
+Cisco_R1_Riyadh,Hu0/0/0/0,100Gbps,Cisco_R1_Riyadh/Hu0/0/0/0,Hu0/0/0/0,Colt_NW_Cloud,Colt_NW_Cloud/Hu0/0/0/0,Cisco_R1_Riyadh/Hu0/0/0/0_Colt_NW_Cloud/Hu0/0/0/0
+Cisco_R1_Riyadh,Hu0/0/0/1,100Gbps,Cisco_R1_Riyadh/Hu0/0/0/1,Hu0/0/0/1,Colt_NW_Cloud,Colt_NW_Cloud/Hu0/0/0/1,Cisco_R1_Riyadh/Hu0/0/0/1_Colt_NW_Cloud/Hu0/0/0/1
+Cisco_R2_Madrid,Hu0/0/0/1,100Gbps,Cisco_R2_Madrid/Hu0/0/0/1,Hu0/0/0/2,Colt_NW_Cloud,Colt_NW_Cloud/Hu0/0/0/2,Cisco_R2_Madrid/Hu0/0/0/1_Colt_NW_Cloud/Hu0/0/0/2
+Cisco_R3_Dubai,Hu0/0/0/0,100Gbps,Cisco_R3_Dubai/Hu0/0/0/0,Hu0/0/0/4,Colt_NW_Cloud,Colt_NW_Cloud/Hu0/0/0/4,Cisco_R3_Dubai/Hu0/0/0/0_Colt_NW_Cloud/Hu0/0/0/4
+Cisco_R4_Jeddah,Hu0/0/0/1,100Gbps,Cisco_R4_Jeddah/Hu0/0/0/1,Hu0/0/0/5,Colt_NW_Cloud,Colt_NW_Cloud/Hu0/0/0/5,Cisco_R4_Jeddah/Hu0/0/0/1_Colt_NW_Cloud/Hu0/0/0/5
