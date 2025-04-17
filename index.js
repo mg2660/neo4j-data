@@ -6,11 +6,14 @@ const {
   GraphQLList
 } = require('graphql');
 const axios = require('axios');
+const { graphqlHTTP } = require('express-graphql');
+
+const app = express();
 
 const baseURL = 'https://cognizantdemo4.service-now.com/api/now/table';
 const auth = {
-  username: 'your_username',
-  password: 'your_password'
+  username: 'username',      //change it
+  password: 'password'
 };
 
 // Model Category Type
@@ -72,9 +75,8 @@ const schema = new GraphQLSchema({
   query: RootQuery
 });
 
-// Express App
-const app = express();
-app.use('/graphql', require('express-graphql')({
+// GraphQL Endpoint
+app.use('/graphql', graphqlHTTP({
   schema,
   graphiql: true
 }));
