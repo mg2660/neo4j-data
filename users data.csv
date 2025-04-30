@@ -1,0 +1,21 @@
+Name,User ID,User Type,Equipment ID,Equipment Type,Router
+Alice,U001,player,E001,mobile,R1_verizon
+Bob,U002,viewer,E002,PC,R2_verizon
+Charlie,U003,player,E003,gaming station,R3_verizon
+David,U004,viewer,E004,mobile,R1_verizon
+Eve,U005,player,E005,PC,R2_verizon
+Frank,U006,viewer,E006,gaming station,R3_verizon
+Grace,U007,player,E007,mobile,R1_verizon
+Hank,U008,viewer,E008,PC,R2_verizon
+Ivy,U009,player,E009,gaming station,R3_verizon
+Jack,U010,viewer,E010,mobile,R1_verizon
+Kate,U011,player,E011,mobile,R1_verizon
+Leo,U012,viewer,E012,PC,R2_verizon
+Mia,U013,player,E013,gaming station,R3_verizon
+Nina,U014,viewer,E014,mobile,R1_verizon
+Oscar,U015,player,E015,PC,R2_verizon
+Paul,U016,viewer,E016,gaming station,R3_verizon
+Quinn,U017,player,E017,mobile,R1_verizon
+Rose,U018,viewer,E018,PC,R2_verizon
+Sam,U019,player,E019,gaming station,R3_verizon
+Tina,U020,viewer,E020,mobile,R1_verizon
