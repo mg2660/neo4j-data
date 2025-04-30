@@ -1,4 +1,4 @@
-Name,User ID,User Type,Equipment ID,Equipment Type,Router
+name,user_ID,user_type,equipment_ID,equipment_type,router
 Alice,U001,player,E001,mobile,R1_verizon
 Bob,U002,viewer,E002,PC,R2_verizon
 Charlie,U003,player,E003,gaming station,R3_verizon
