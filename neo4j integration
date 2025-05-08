@@ -1,0 +1,75 @@
+Here is the updated code for your files:
+
+
+---
+
+location-updated.component.html
+
+Replace the entire content with this:
+
+<!-- Neo4j Graph Container -->
+<div id="graph" style="width: 100%; height: 600px;"></div>
+
+<!-- Neovis.js Library -->
+<script src="https://unpkg.com/neovis.js@2.0.2/dist/neovis.js"></script>
+
+
+---
+
+location-updated.component.ts
+
+Replace or update your component like this:
+
+import { Component, AfterViewInit } from '@angular/core';
+
+declare var NeoVis: any;
+
+@Component({
+  selector: 'app-location-updated',
+  templateUrl: './location-updated.component.html',
+  styleUrls: ['./location-updated.component.css']
+})
+export class LocationUpdatedComponent implements AfterViewInit {
+
+  ngAfterViewInit(): void {
+    const config = {
+      containerId: "graph",
+      neo4j: {
+        serverUrl: "bolt://localhost:7687", // or neo4j+s://<host> if using AuraDB
+        serverUser: "neo4j",
+        serverPassword: "your_password"
+      },
+      labels: {
+        "Person": {
+          caption: "name",
+          size: "size"
+        }
+      },
+      relationships: {
+        "KNOWS": {
+          thickness: "weight",
+          caption: true
+        }
+      },
+      initialCypher: "MATCH (n)-[r]->(m) RETURN n,r,m LIMIT 50"
+    };
+
+    const viz = new NeoVis.default(config);
+    viz.render();
+  }
+}
+
+
+---
+
+Notes:
+
+Replace "your_password" with your actual Neo4j DB password.
+
+Replace "Person" and "KNOWS" with your actual node labels and relationship types.
+
+If you're using Neo4j AuraDB or Docker, make sure the serverUrl uses the correct protocol (neo4j:// or neo4j+s://).
+
+
+Would you like help debugging the error you saw earlier?
+
