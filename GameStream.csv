@@ -1,0 +1,3 @@
+Equip_Name,Site Name,Site Type,No of Session,Latitude,Longitude,Active Gaming Session,No. of Session Gold,No of Session Silver,No of Session Bronze,Ip Address,Site Owner
+UPF_EDGE,N/A,EDGE,10,12.913,82.321,2,2,0,0,192.4.2.9,N/A
+UPF_CORE,N/A,CORE,8,197.181,63.173,3,0,3,0,192.16.82.1,N/A
