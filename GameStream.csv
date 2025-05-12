@@ -1,0 +1,5 @@
+Equip_Name,Site_Name,Site_Owner,Latitude,Longitude,No of Streams,Server Type,OS,Game Engine,Upstream Speed,Downstream Speed,CPU Utilization,Memory Utilization
+GS_1,N/A,AWS,23.132,232.323,10,XXL,Windows,Unity,500Mbps,500Mbps,0,0
+GS_2,N/A,AWS,14.36,363.26,3,L,Linux,Unreal,50Mbps,50Mbps,0,0
+GS_3,N/A,AWS,25.62,73.372,5,XL,Linux,Unreal,100Mbps,100Mbps,0,0
+GS_4,N/A,AWS,361.63,937.43,7,XXL,Windows,WebGL,100Mbps,100Mbps,0,0
