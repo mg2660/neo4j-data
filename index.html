@@ -9,38 +9,100 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background: #f4f4f4;
     }
     h2 {
       text-align: center;
       padding: 1rem;
       background: #0b7285;
       color: white;
+      margin: 0;
+    }
+    #controls {
+      padding: 1rem;
+      background: #e3fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    #cypherInput {
+      width: 70%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    #runQuery {
+      padding: 0.5rem 1rem;
+      background: #0b7285;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #legend {
+      padding: 1rem;
+      background: #fff;
+      border-top: 2px solid #ccc;
+      font-size: 0.9rem;
     }
     #viz {
       width: 100%;
-      height: 90vh;
+      height: 80vh;
       border-top: 2px solid #ccc;
+      position: relative;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      color: #0b7285;
+      display: none;
     }
   </style>
 </head>
 <body>
 
 <h2>Neo4j Aura: Telecom Gaming Network</h2>
-<div id="viz"></div>
+
+<div id="controls">
+  <input type="text" id="cypherInput" placeholder="Enter Cypher query..." />
+  <button id="runQuery">Run Query</button>
+</div>
+
+<div id="viz">
+  <div id="loading">Loading graph...</div>
+</div>
+
+<div id="legend">
+  <strong>Legend:</strong><br />
+  <span style="color: #f39c12;">● UserEquipment</span> |
+  <span style="color: #2980b9;">● gNodeB</span> |
+  <span style="color: #27ae60;">● UPF</span> |
+  <span style="color: #9b59b6;">● GSC</span> |
+  <span style="color: #e74c3c;">● GameStream</span>
+</div>
 
 <script>
-  const config = {
+  const configTemplate = {
     containerId: "viz",
     neo4j: {
-      serverUrl: "neo4j+s://YOUR_INSTANCE_ID.databases.neo4j.io",
+      serverUrl: "neo4j+s://44bb5bca.databases.neo4j.io",
       serverUser: "neo4j",
-      serverPassword: "YOUR_PASSWORD"
+      serverPassword: "qeBs7NpBR7LILa5bajN5cDVPT-lCJzwJJyrSwQbYrWg"
+      // No driverConfig needed for Aura + neo4j+s://
     },
     visConfig: {
       nodes: {
         shape: "dot",
         scaling: { min: 20, max: 60 },
-        font: { size: 20, color: "#111", face: "Arial", strokeWidth: 3, strokeColor: "#fff" }
+        font: {
+          size: 20,
+          color: "#111",
+          face: "Arial",
+          strokeWidth: 3,
+          strokeColor: "#fff"
+        }
       },
       edges: {
         font: { size: 14, align: "middle", color: "#444" },
@@ -48,47 +110,21 @@
         color: { color: "#777", highlight: "#000" },
         scaling: { min: 1, max: 5 }
       },
-      layout: {
-        improvedLayout: true
-      },
       physics: {
         enabled: true,
         barnesHut: {
-          gravitationalConstant: -8000,  // tighter pull
-          springLength: 100,             // closer nodes
-          springConstant: 0.04
+          gravitationalConstant: -5000,
+          springLength: 100
         },
-        stabilization: {
-          iterations: 150
-        }
+        stabilization: { iterations: 150 }
       }
     },
     labels: {
-      UserEquipment: {
-        caption: "name",
-        size: "noOfGames",
-        color: "#f39c12"
-      },
-      gNodeB: {
-        caption: "name",
-        size: "activeGamingSession",
-        color: "#2980b9"
-      },
-      UPF: {
-        caption: "name",
-        size: "activeGamingSession",
-        color: "#27ae60"
-      },
-      GSC: {
-        caption: "name",
-        size: "activeGamingSession",
-        color: "#9b59b6"
-      },
-      GameStream: {
-        caption: "name",
-        size: "noOfStreams",
-        color: "#e74c3c"
-      }
+      UserEquipment: { caption: "name", size: "noOfGames", color: "#f39c12" },
+      gNodeB: { caption: "name", size: "activeGamingSession", color: "#2980b9" },
+      UPF: { caption: "name", size: "activeGamingSession", color: "#27ae60" },
+      GSC: { caption: "name", size: "activeGamingSession", color: "#9b59b6" },
+      GameStream: { caption: "name", size: "noOfStreams", color: "#e74c3c" }
     },
     relationships: {
       CONNECTS: {
@@ -97,18 +133,45 @@
         color: "#34495e"
       }
     },
-    initialCypher: "MATCH p=()-[r:CONNECTS]->() RETURN p LIMIT 100"
+    initialCypher: "MATCH p=()-[r:CONNECTS]->() RETURN p"
   };
 
-  const viz = new NeoVis.default(config);
-  viz.render();
+  let viz;
 
-  // Auto-zoom after a short delay
-  setTimeout(() => {
-    if (viz && viz._network) {
-      viz._network.fit({ animation: true });
+  function renderGraph(cypher) {
+    document.getElementById("loading").style.display = "block";
+
+    if (viz) {
+      viz.clearNetwork();
     }
-  }, 1500);
+
+    const config = JSON.parse(JSON.stringify(configTemplate));
+    if (cypher) {
+      config.initialCypher = cypher;
+    }
+
+    viz = new NeoVis.default(config);
+    viz.render();
+
+    // Hide loading when done
+    viz.registerOnEvent("completed", () => {
+      document.getElementById("loading").style.display = "none";
+      // Auto-fit graph
+      viz._network.fit({ animation: true });
+    });
+  }
+
+  document.getElementById("runQuery").addEventListener("click", () => {
+    const cypher = document.getElementById("cypherInput").value.trim();
+    if (cypher) {
+      renderGraph(cypher);
+    } else {
+      alert("Please enter a Cypher query.");
+    }
+  });
+
+  // Initial render with default query
+  renderGraph();
 </script>
 
 </body>
