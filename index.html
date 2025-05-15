@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Neo4j Graph Visualization</title>
+  <meta charset="UTF-8" />
+  <title>Neo4j Network Graph</title>
   <script src="https://unpkg.com/neovis.js@2.0.2"></script>
   <style>
     body {
@@ -12,7 +12,9 @@
     }
     h2 {
       text-align: center;
-      margin-top: 20px;
+      padding: 1rem;
+      background: #0b7285;
+      color: white;
     }
     #viz {
       width: 100%;
@@ -23,43 +25,56 @@
 </head>
 <body>
 
-  <h2>Neo4j Aura Graph Visualization</h2>
-  <div id="viz"></div>
+<h2>Neo4j Aura: Telecom Gaming Network</h2>
+<div id="viz"></div>
 
-  <script>
-    const config = {
-      containerId: "viz",
-      neo4j: {
-        serverUrl: "neo4j+s://YOUR_INSTANCE_ID.databases.neo4j.io",
-        serverUser: "neo4j",
-        serverPassword: "YOUR_PASSWORD"
+<script>
+  const config = {
+    containerId: "viz",
+    neo4j: {
+      serverUrl: "neo4j+s://YOUR_INSTANCE_ID.databases.neo4j.io",
+      serverUser: "neo4j",
+      serverPassword: "YOUR_PASSWORD"
+    },
+    labels: {
+      UserEquipment: {
+        caption: "name",
+        size: "noOfGames",
+        titleProperties: ["planName", "gameClass", "location", "subscription"]
       },
-      labels: {
-        // Replace or extend this with your actual node labels
-        Person: {
-          caption: "name",
-          size: "pagerank",
-          community: "community"
-        },
-        Company: {
-          caption: "name"
-        }
+      gNodeB: {
+        caption: "name",
+        size: "activeGamingSession",
+        titleProperties: ["siteOwner", "noOfSliceSupported"]
       },
-      relationships: {
-        // Replace with your actual relationship types
-        WORKS_FOR: {
-          caption: true
-        },
-        KNOWS: {
-          caption: false
-        }
+      UPF: {
+        caption: "name",
+        size: "activeGamingSession",
+        titleProperties: ["siteType", "noOfSession"]
       },
-      initialCypher: "MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 50"
-    };
+      GSC: {
+        caption: "name",
+        size: "activeGamingSession",
+        titleProperties: ["siteOwner", "noOfGames", "downstreamSpeed"]
+      },
+      GameStream: {
+        caption: "name",
+        size: "noOfStreams",
+        titleProperties: ["gameEngine", "serverType", "os"]
+      }
+    },
+    relationships: {
+      CONNECTS: {
+        caption: "bandwidth",
+        titleProperties: ["bandwidth", "interface"]
+      }
+    },
+    initialCypher: "MATCH p=()-[r:CONNECTS]->() RETURN p LIMIT 100"
+  };
 
-    const viz = new NeoVis.default(config);
-    viz.render();
-  </script>
+  const viz = new NeoVis.default(config);
+  viz.render();
+</script>
 
 </body>
 </html>
