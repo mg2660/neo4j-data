@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Neo4j Network Graph</title>
+  <title>Neo4j Aura Graph Viewer</title>
   <script src="https://unpkg.com/neovis.js@2.0.2"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f4f4f4;
+      margin: 0; padding: 0;
+      background: #f9f9f9;
     }
     h2 {
       text-align: center;
@@ -22,27 +21,23 @@
       padding: 1rem;
       background: #e3fafc;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: center;
+      gap: 10px;
       flex-wrap: wrap;
     }
     #cypherInput {
-      width: 70%;
+      width: 60%;
+      min-width: 300px;
       padding: 0.5rem;
       font-size: 1rem;
     }
     #runQuery {
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.5rem;
       background: #0b7285;
       color: white;
       border: none;
       cursor: pointer;
-    }
-    #legend {
-      padding: 1rem;
-      background: #fff;
-      border-top: 2px solid #ccc;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
     #viz {
       width: 100%;
@@ -50,38 +45,18 @@
       border-top: 2px solid #ccc;
       position: relative;
     }
-    #loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.2rem;
-      color: #0b7285;
-      display: none;
-    }
   </style>
 </head>
 <body>
 
-<h2>Neo4j Aura: Telecom Gaming Network</h2>
+<h2>Neo4j Aura Graph Viewer</h2>
 
 <div id="controls">
-  <input type="text" id="cypherInput" placeholder="Enter Cypher query..." />
+  <input type="text" id="cypherInput" placeholder="Enter Cypher query (or leave empty for default)" />
   <button id="runQuery">Run Query</button>
 </div>
 
-<div id="viz">
-  <div id="loading">Loading graph...</div>
-</div>
-
-<div id="legend">
-  <strong>Legend:</strong><br />
-  <span style="color: #f39c12;">● UserEquipment</span> |
-  <span style="color: #2980b9;">● gNodeB</span> |
-  <span style="color: #27ae60;">● UPF</span> |
-  <span style="color: #9b59b6;">● GSC</span> |
-  <span style="color: #e74c3c;">● GameStream</span>
-</div>
+<div id="viz"></div>
 
 <script>
   const configTemplate = {
@@ -89,20 +64,14 @@
     neo4j: {
       serverUrl: "neo4j+s://44bb5bca.databases.neo4j.io",
       serverUser: "neo4j",
-      serverPassword: "qeBs7NpBR7LILa5bajN5cDVPT-lCJzwJJyrSwQbYrWg"
-      // No driverConfig needed for Aura + neo4j+s://
+      serverPassword: "qeBs7NpBR7LILa5bajN5cDVPT-lCJzwJJyrSwQbYrWg",
+      driverConfig: {}
     },
     visConfig: {
       nodes: {
         shape: "dot",
         scaling: { min: 20, max: 60 },
-        font: {
-          size: 20,
-          color: "#111",
-          face: "Arial",
-          strokeWidth: 3,
-          strokeColor: "#fff"
-        }
+        font: { size: 18, color: "#111", face: "Arial", strokeWidth: 2, strokeColor: "#fff" }
       },
       edges: {
         font: { size: 14, align: "middle", color: "#444" },
@@ -112,10 +81,7 @@
       },
       physics: {
         enabled: true,
-        barnesHut: {
-          gravitationalConstant: -5000,
-          springLength: 100
-        },
+        barnesHut: { gravitationalConstant: -5000, springLength: 100 },
         stabilization: { iterations: 150 }
       }
     },
@@ -127,11 +93,7 @@
       GameStream: { caption: "name", size: "noOfStreams", color: "#e74c3c" }
     },
     relationships: {
-      CONNECTS: {
-        caption: true,
-        thickness: "bandwidth",
-        color: "#34495e"
-      }
+      CONNECTS: { caption: true, thickness: "bandwidth", color: "#34495e" }
     },
     initialCypher: "MATCH p=()-[r:CONNECTS]->() RETURN p"
   };
@@ -139,38 +101,27 @@
   let viz;
 
   function renderGraph(cypher) {
-    document.getElementById("loading").style.display = "block";
-
-    if (viz) {
-      viz.clearNetwork();
-    }
+    if (viz) viz.clearNetwork();
 
     const config = JSON.parse(JSON.stringify(configTemplate));
-    if (cypher) {
+    if (cypher && cypher.trim() !== "") {
       config.initialCypher = cypher;
     }
 
     viz = new NeoVis.default(config);
     viz.render();
 
-    // Hide loading when done
     viz.registerOnEvent("completed", () => {
-      document.getElementById("loading").style.display = "none";
-      // Auto-fit graph
       viz._network.fit({ animation: true });
     });
   }
 
   document.getElementById("runQuery").addEventListener("click", () => {
-    const cypher = document.getElementById("cypherInput").value.trim();
-    if (cypher) {
-      renderGraph(cypher);
-    } else {
-      alert("Please enter a Cypher query.");
-    }
+    const cypher = document.getElementById("cypherInput").value;
+    renderGraph(cypher);
   });
 
-  // Initial render with default query
+  // Initial render
   renderGraph();
 </script>
 
