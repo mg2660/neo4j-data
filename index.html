@@ -30,48 +30,64 @@
 
 <script>
   const config = {
-    containerId: "viz",    
-  neo4j: {
-    serverUrl: "neo4j://44bb5bca.databases.neo4j.io", // Non-encrypted URL
-    serverUser: "neo4j",
-    serverPassword: "qeBs7NpBR7LILa5bajN5cDVPT-lCJzwJJyrSwQbYrWg",
-    driverConfig: {
-      encrypted: "ENCRYPTION_ON",
-      trust: "TRUST_SYSTEM_CA_SIGNED_CERTIFICATES"
-    }
-  },
-
+    containerId: "viz",
+    neo4j: {
+      serverUrl: "neo4j+s://YOUR_INSTANCE_ID.databases.neo4j.io",
+      serverUser: "neo4j",
+      serverPassword: "YOUR_PASSWORD"
+    },
+    visConfig: {
+      nodes: {
+        shape: "dot",
+        font: { size: 14, color: "#000", face: "Arial" }
+      },
+      edges: {
+        font: { size: 12, align: "middle", color: "#666" },
+        arrows: {
+          to: { enabled: true, scaleFactor: 0.7 }
+        },
+        color: { color: "#999", highlight: "#333" }
+      },
+      physics: {
+        enabled: true,
+        barnesHut: {
+          gravitationalConstant: -30000,
+          springLength: 200
+        }
+      }
+    },
     labels: {
       UserEquipment: {
         caption: "name",
         size: "noOfGames",
-        titleProperties: ["planName", "gameClass", "location", "subscription"]
+        color: "#f39c12"
       },
       gNodeB: {
         caption: "name",
         size: "activeGamingSession",
-        titleProperties: ["siteOwner", "noOfSliceSupported"]
+        color: "#2980b9"
       },
       UPF: {
         caption: "name",
         size: "activeGamingSession",
-        titleProperties: ["siteType", "noOfSession"]
+        color: "#27ae60"
       },
       GSC: {
         caption: "name",
         size: "activeGamingSession",
-        titleProperties: ["siteOwner", "noOfGames", "downstreamSpeed"]
+        color: "#9b59b6"
       },
       GameStream: {
         caption: "name",
         size: "noOfStreams",
-        titleProperties: ["gameEngine", "serverType", "os"]
+        color: "#e74c3c"
       }
     },
     relationships: {
       CONNECTS: {
-        caption: "bandwidth",
-        titleProperties: ["bandwidth", "interface"]
+        caption: true,
+        thickness: "bandwidth",
+        color: "#34495e"
       }
     },
     initialCypher: "MATCH p=()-[r:CONNECTS]->() RETURN p LIMIT 100"
