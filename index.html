@@ -30,12 +30,17 @@
 
 <script>
   const config = {
-    containerId: "viz",
-    neo4j: {
-      serverUrl: "neo4j+s://YOUR_INSTANCE_ID.databases.neo4j.io",
-      serverUser: "neo4j",
-      serverPassword: "YOUR_PASSWORD"
-    },
+    containerId: "viz",    
+  neo4j: {
+    serverUrl: "neo4j://44bb5bca.databases.neo4j.io", // Non-encrypted URL
+    serverUser: "neo4j",
+    serverPassword: "qeBs7NpBR7LILa5bajN5cDVPT-lCJzwJJyrSwQbYrWg",
+    driverConfig: {
+      encrypted: "ENCRYPTION_ON",
+      trust: "TRUST_SYSTEM_CA_SIGNED_CERTIFICATES"
+    }
+  },
+
     labels: {
       UserEquipment: {
         caption: "name",
