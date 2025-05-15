@@ -39,41 +39,27 @@
     visConfig: {
       nodes: {
         shape: "dot",
-        scaling: {
-          min: 20,
-          max: 60
-        },
-        font: {
-          size: 20,
-          color: "#111",
-          face: "Arial",
-          strokeWidth: 3,
-          strokeColor: "#fff"
-        }
+        scaling: { min: 20, max: 60 },
+        font: { size: 20, color: "#111", face: "Arial", strokeWidth: 3, strokeColor: "#fff" }
       },
       edges: {
-        font: {
-          size: 14,
-          align: "middle",
-          color: "#444"
-        },
-        arrows: {
-          to: { enabled: true, scaleFactor: 1 }
-        },
-        color: {
-          color: "#777",
-          highlight: "#000"
-        },
-        scaling: {
-          min: 1,
-          max: 5
-        }
+        font: { size: 14, align: "middle", color: "#444" },
+        arrows: { to: { enabled: true, scaleFactor: 1 } },
+        color: { color: "#777", highlight: "#000" },
+        scaling: { min: 1, max: 5 }
+      },
+      layout: {
+        improvedLayout: true
       },
       physics: {
         enabled: true,
         barnesHut: {
-          gravitationalConstant: -25000,
-          springLength: 250
+          gravitationalConstant: -8000,  // tighter pull
+          springLength: 100,             // closer nodes
+          springConstant: 0.04
+        },
+        stabilization: {
+          iterations: 150
         }
       }
     },
@@ -116,6 +102,13 @@
 
   const viz = new NeoVis.default(config);
   viz.render();
+
+  // Auto-zoom after a short delay
+  setTimeout(() => {
+    if (viz && viz._network) {
+      viz._network.fit({ animation: true });
+    }
+  }, 1500);
 </script>
 
 </body>
