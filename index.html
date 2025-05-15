@@ -39,20 +39,41 @@
     visConfig: {
       nodes: {
         shape: "dot",
-        font: { size: 14, color: "#000", face: "Arial" }
+        scaling: {
+          min: 20,
+          max: 60
+        },
+        font: {
+          size: 20,
+          color: "#111",
+          face: "Arial",
+          strokeWidth: 3,
+          strokeColor: "#fff"
+        }
       },
       edges: {
-        font: { size: 12, align: "middle", color: "#666" },
-        arrows: {
-          to: { enabled: true, scaleFactor: 0.7 }
+        font: {
+          size: 14,
+          align: "middle",
+          color: "#444"
         },
-        color: { color: "#999", highlight: "#333" }
+        arrows: {
+          to: { enabled: true, scaleFactor: 1 }
+        },
+        color: {
+          color: "#777",
+          highlight: "#000"
+        },
+        scaling: {
+          min: 1,
+          max: 5
+        }
       },
       physics: {
         enabled: true,
         barnesHut: {
-          gravitationalConstant: -30000,
-          springLength: 200
+          gravitationalConstant: -25000,
+          springLength: 250
         }
       }
     },
