@@ -76,8 +76,13 @@
       edges: {
         font: { size: 14, align: "middle", color: "#444" },
         arrows: { to: { enabled: true, scaleFactor: 1 } },
-        color: { color: "#777", highlight: "#000" },
-        scaling: { min: 1, max: 5 }
+        color: { color: "#34495e", highlight: "#000" },
+        scaling: { min: 1, max: 5 },
+        smooth: {
+          enabled: true,
+          type: "curvedCW",
+          roundness: 0.4
+        }
       },
       physics: {
         enabled: true,
@@ -93,9 +98,13 @@
       GameStream: { caption: "name", size: "noOfStreams", color: "#e74c3c" }
     },
     relationships: {
-      CONNECTS: { caption: true, thickness: "bandwidth", color: "#34495e" }
+      CONNECTS: {
+        caption: "bandwidth",
+        thickness: "1",
+        color: "#34495e"
+      }
     },
-    initialCypher: "MATCH p=()-[r:CONNECTS]->() RETURN p"
+    initialCypher: "MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 200"
   };
 
   let viz;
@@ -113,6 +122,10 @@
 
     viz.registerOnEvent("completed", () => {
       viz._network.fit({ animation: true });
+    });
+
+    viz.registerOnEvent("error", (e) => {
+      alert("Query error: " + e.detail);
     });
   }
 
