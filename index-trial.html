@@ -5,20 +5,47 @@
   <title>Neo4j Aura Graph Viewer (Fixed)</title>
   <script src="https://unpkg.com/neovis.js@2.0.2"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
-    h2 { text-align: center; padding: 1rem; background: #0b7285; color: white; margin: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+    h2 {
+      text-align: center;
+      padding: 1rem;
+      background: #0b7285;
+      color: white;
+      margin: 0;
+    }
     #controls {
-      padding: 1rem; background: #e3fafc;
-      display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+      padding: 1rem;
+      background: #e3fafc;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     #cypherInput {
-      width: 60%; min-width: 300px; padding: 0.5rem; font-size: 1rem;
+      width: 60%;
+      min-width: 300px;
+      padding: 0.5rem;
+      font-size: 1rem;
     }
     #runQuery {
-      padding: 0.5rem 1.5rem; background: #0b7285; color: white;
-      border: none; cursor: pointer; font-size: 1rem;
+      padding: 0.5rem 1.5rem;
+      background: #0b7285;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
     }
-    #viz { width: 100%; height: 80vh; border-top: 2px solid #ccc; }
+    #viz {
+      width: 100%;
+      height: 80vh;
+      border-top: 2px solid #ccc;
+      position: relative;
+    }
   </style>
 </head>
 <body>
@@ -40,25 +67,7 @@
       serverUser: "neo4j",
       serverPassword: "qeBs7NpBR7LILa5bajN5cDVPT-lCJzwJJyrSwQbYrWg"
     },
-    visConfig: {
-      nodes: {
-        shape: "dot",
-        scaling: { min: 20, max: 60 },
-        font: { size: 18, color: "#111", face: "Arial", strokeWidth: 2, strokeColor: "#fff" }
-      },
-      edges: {
-        font: { size: 14, align: "middle", color: "#444" },
-        arrows: { to: { enabled: true, scaleFactor: 1 } },
-        color: { color: "#34495e", highlight: "#000" },
-        scaling: { min: 1, max: 5 },
-        smooth: { enabled: true, type: "curvedCW", roundness: 0.4 }
-      },
-      physics: {
-        enabled: true,
-        barnesHut: { gravitationalConstant: -5000, springLength: 100 },
-        stabilization: { iterations: 150 }
-      }
-    },
+    nodeCaption: true,
     labels: {
       UserEquipment: {
         caption: "name",
@@ -93,16 +102,47 @@
         color: "#34495e"
       }
     },
-    initialCypher: "MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 200",
-    nodeCaption: true
+    visConfig: {
+      nodes: {
+        shape: "dot",
+        scaling: { min: 20, max: 60 },
+        font: {
+          size: 18,
+          color: "#111",
+          face: "Arial",
+          strokeWidth: 2,
+          strokeColor: "#fff"
+        }
+      },
+      edges: {
+        font: { size: 14, align: "middle", color: "#444" },
+        arrows: { to: { enabled: true, scaleFactor: 1 } },
+        color: { color: "#34495e", highlight: "#000" },
+        scaling: { min: 1, max: 5 },
+        smooth: {
+          enabled: true,
+          type: "curvedCW",
+          roundness: 0.4
+        }
+      },
+      physics: {
+        enabled: true,
+        barnesHut: {
+          gravitationalConstant: -5000,
+          springLength: 100
+        },
+        stabilization: { iterations: 150 }
+      }
+    },
+    initialCypher: "MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 200"
   };
 
   let viz;
 
   function renderGraph(cypher) {
     if (viz) viz.clearNetwork();
-    const config = JSON.parse(JSON.stringify(configTemplate));
 
+    const config = JSON.parse(JSON.stringify(configTemplate));
     if (cypher && cypher.trim() !== "") {
       config.initialCypher = cypher;
     }
@@ -111,7 +151,7 @@
     viz.render();
 
     viz.registerOnEvent("completed", () => {
-      console.log("Completed Rendering.");
+      console.log("Rendering completed.");
       console.log("Nodes:", viz._data?.nodes);
       console.log("Edges:", viz._data?.edges);
       viz._network.fit({ animation: true });
