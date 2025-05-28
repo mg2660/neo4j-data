@@ -134,7 +134,7 @@
         stabilization: { iterations: 150 }
       }
     },
-    initialCypher: "MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 200"
+    initialCypher: "MATCH p=(n)-[r]-(m) RETURN p"
   };
 
   let viz;
