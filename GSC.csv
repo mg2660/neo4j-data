@@ -1,2 +1,2 @@
-equipName,siteName,siteType,siteOwner,latitude,longitude,activeGamingSession,noOfSessionGold,noOfSessionSilver,noOfSessionBronze,ipAddress,noOfGames,noOfLyraSessions,noOfAvaterSessions,noOfCarRacingSessions,rtd,packetLoss,jitter,upstreamSpeed,downstreamSpeed
-GSC,N/A,N/A,STC,287.231,98.812,5,2,3,0,192.3.3.9,3,1,1,1,0,0,0,100Mbps,50Mbps
+equipName,siteName,siteType,siteOwner,latitude,longitude,activeGamingSession,noOfSessionGold,noOfSessionSilver,noOfSessionBronze,ipAddress,noOfGames,noOfLyraSessions,noOfAvaterSessions,noOfCarRacingSessions,rtd,packetLoss,jitter,upstreamSpeed,downstreamSpeed,alarm_status
+GSC,Riyadh,N/A,STC,287.231,98.812,5,2,3,0,192.3.3.9,3,1,1,1,0,0,0,100Mbps,50Mbps,GREEN
