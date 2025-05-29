@@ -1,14 +1,14 @@
-name,manufacturer,ip_address,serial_number,device_type,sys_updated_on,sys_created_by,can_route,can_switch,can_partitionvlans
-R1_AWS,AWS,10.10.10.15,R22,Router,24-04-2025 04:15,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R1_cisco,Cisco,0.0.0.0,R12801,Router,24-04-2025 04:42,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R1_colt,Colt,0.0.0.0,R453,Router,24-04-2025 04:39,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R1_verizon,Verizon,0.0.0.0,R673,Router,24-04-2025 04:41,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R2_AWS,AWS,10.10.10.16,R23,Router,24-04-2025 04:17,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R2_cisco,Cisco,0.0.0.0,R12802,Router,24-04-2025 04:43,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R2_colt,Colt,0.0.0.0,R454,Router,24-04-2025 04:39,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R2_verizon,Verizon,0.0.0.0,R674,Router,24-04-2025 04:41,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R3_AWS,AWS,10.10.10.17,R24,Router,24-04-2025 04:19,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R3_cisco,Cisco,0.0.0.0,R12812,Router,24-04-2025 04:43,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R3_colt,Colt,0.0.0.0,R455,Router,24-04-2025 04:40,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R3_verizon,Verizon,0.0.0.0,R676,Router,24-04-2025 04:42,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
-R4_cisco,Cisco,0.0.0.0,R12814,Router,24-04-2025 04:43,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE
+name,manufacturer,ip_address,serial_number,device_type,sys_updated_on,sys_created_by,can_route,can_switch,can_partitionvlans,alarm_status,operation,location
+R1_AWS,AWS,10.10.10.15,R22,Router,24-04-2025 04:15,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,US-east
+R1_cisco,Cisco,0.0.0.0,R12801,Router,24-04-2025 04:42,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,Medina
+R1_colt,Colt,0.0.0.0,R453,Router,24-04-2025 04:39,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,Medina
+R1_verizon,Verizon,0.0.0.0,R673,Router,24-04-2025 04:41,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,Riyadh
+R2_AWS,AWS,10.10.10.16,R23,Router,24-04-2025 04:17,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,US-west
+R2_cisco,Cisco,0.0.0.0,R12802,Router,24-04-2025 04:43,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,Medina
+R2_colt,Colt,0.0.0.0,R454,Router,24-04-2025 04:39,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,Mecca
+R2_verizon,Verizon,0.0.0.0,R674,Router,24-04-2025 04:41,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,GREEN,Operational,Riyadh
+R3_AWS,AWS,10.10.10.17,R24,Router,24-04-2025 04:19,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,AMBER,Operational,US-north
+R3_cisco,Cisco,0.0.0.0,R12812,Router,24-04-2025 04:43,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,RED,Inventory,Jeddah
+R3_colt,Colt,0.0.0.0,R455,Router,24-04-2025 04:40,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,RED,Inventory,Mecca
+R3_verizon,Verizon,0.0.0.0,R676,Router,24-04-2025 04:42,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,RED,Inventory,Riyadh
+R4_cisco,Cisco,0.0.0.0,R12814,Router,24-04-2025 04:43,mohit.gautam2@cognizant.com,FALSE,FALSE,FALSE,RED,Inventory,Jeddah
