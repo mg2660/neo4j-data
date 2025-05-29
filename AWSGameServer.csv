@@ -1,0 +1,4 @@
+﻿name,IP_address,operation,alarm_status,location
+GS1_AWS,12.26.21.121,Operational,GREEN,US-east
+GS2_AWS,12.26.21.122,Operational,GREEN,US-east
+GS3_AWS,12.26.21.123,Operational,AMBER,US-west
