@@ -1,0 +1,120 @@
+Great! If you want to install and run TinyLLM on a server, here's a clear step-by-step guide assuming a Linux (Ubuntu/Debian) based server:
+
+
+---
+
+✅ Prerequisites
+
+A server with at least 8–16GB RAM (more is better, especially for larger models)
+
+Python 3.10+
+
+git, pip, curl, wget
+
+GPU (optional but recommended for faster inference)
+
+Docker (optional, but simplifies setup)
+
+
+
+---
+
+🔧 Step-by-Step Installation (Manual Setup)
+
+1. Clone the Repository
+
+git clone https://github.com/jasonacox/TinyLLM.git
+cd TinyLLM
+
+
+---
+
+2. Install System Dependencies
+
+sudo apt update && sudo apt install -y python3 python3-venv python3-pip build-essential
+
+
+---
+
+3. Set Up Virtual Environment
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+
+---
+
+4. Install Python Dependencies
+
+pip install --upgrade pip
+pip install -r requirements.txt
+
+> If you're using a GPU, you'll need to build llama-cpp-python with CUDA support — I can guide you through that separately.
+
+
+
+
+---
+
+5. Download a Model
+
+Go to Hugging Face and download a GGUF format model like Mistral 7B (Q4_K_M or Q5_K_M). Example:
+
+mkdir -p models/mistral
+cd models/mistral
+wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q5_K_M.gguf
+cd ../../
+
+
+---
+
+6. Run the LLM Server
+
+python llm-server.py --model models/mistral/mistral-7b-instruct-v0.1.Q5_K_M.gguf
+
+> It will start an LLM API on port 8000 (by default).
+
+
+
+
+---
+
+7. Run the Web Chatbot
+
+In a new terminal or background process:
+
+cd chatbot
+uvicorn chatbot:app --host 0.0.0.0 --port 7860
+
+Now visit: http://your-server-ip:7860 in your browser.
+
+
+---
+
+✅ Optional: Use Docker Instead (Quicker Setup)
+
+If you prefer Docker, just run:
+
+docker-compose up --build
+
+Make sure you have Docker and Docker Compose installed.
+
+
+---
+
+⚠️ Note on GPU
+
+If your server has an NVIDIA GPU:
+
+Install CUDA and cuBLAS
+
+Build llama-cpp-python with GPU support:
+
+CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --no-cache-dir --force-reinstall --upgrade
+
+
+
+---
+
+Would you like me to generate a one-command script that you can paste and run directly to set all this up (with or without GPU)?
+
