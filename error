@@ -1,4 +1,7 @@
+Installing collected packages: wrapt, packaging, deprecated, limits, slowapi
+Successfully installed deprecated-1.2.18 limits-4.2 packaging-24.2 slowapi-0.1.9 wrapt-1.17.2
 (.venv) [ec2-user@ip-172-31-87-237 chatbot]$ uvicorn app.api.routes:app --host 0.0.0.0 --port 8000
+2025-06-06 07:11:17 INFO TinyLLM v0.16.1
 Traceback (most recent call last):
   File "/home/ec2-user/TinyLLM/.venv/bin/uvicorn", line 8, in <module>
     sys.exit(main())
@@ -36,6 +39,33 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 850, in exec_module
   File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
-  File "/home/ec2-user/TinyLLM/chatbot/app/api/routes.py", line 34, in <module>
-    from slowapi import Limiter, _rate_limit_exceeded_handler
-ModuleNotFoundError: No module named 'slowapi'
+  File "/home/ec2-user/TinyLLM/chatbot/app/api/routes.py", line 51, in <module>
+    from app.rag.rag import (rag_documents, get_weather, get_stock, get_news,
+  File "/home/ec2-user/TinyLLM/chatbot/app/rag/rag.py", line 27, in <module>
+    from app.rag.documents import Documents
+  File "/home/ec2-user/TinyLLM/chatbot/app/rag/documents.py", line 56, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+(.venv) [ec2-user@ip-172-31-87-237 chatbot]$ pip install pandas
+Collecting pandas
+  Downloading pandas-2.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (91 kB)
+Collecting numpy>=1.22.4 (from pandas)
+  Downloading numpy-2.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+Collecting python-dateutil>=2.8.2 (from pandas)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz>=2020.1 (from pandas)
+  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas)
+  Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading pandas-2.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 48.9 MB/s eta 0:00:00
+Downloading numpy-2.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (19.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 19.5/19.5 MB 95.3 MB/s eta 0:00:00
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
+Installing collected packages: pytz, tzdata, six, numpy, python-dateutil, pandas
+ERROR: Could not install packages due to an OSError: [Errno 28] No space left on device: '/home/ec2-user/TinyLLM/.venv/lib/python3.9/site-packages/pytz/zoneinfo/America/Los_Angeles'
