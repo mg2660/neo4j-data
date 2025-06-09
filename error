@@ -1,25 +1,24 @@
-2025-06-09 07:31:24 INFO SwarmUI server (http://localhost:7801) not reachable: HTTPConnectionPool(host='localhost', port=7801): Max retries exceeded with url: /API/GetNewSession (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f69c7fc7490>: Failed to establish a new connection: [Errno 111] Connection refused'))
-2025-06-09 07:31:24 INFO Image generator not available - set SwarmUI server using SWARMUI environment variable
-INFO:     Started server process [7879]
-INFO:     Waiting for application startup.
-2025-06-09 07:31:24 INFO Starting chatbot...
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     42.105.140.9:17325 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcU0y HTTP/1.1" 200 OK
-INFO:     42.105.140.9:17325 - "POST /socket.io/?EIO=4&transport=polling&t=PTJcUeE&sid=PqetoDJz1fYYtRYFAAAA HTTP/1.1" 200 OK
-INFO:     42.105.140.9:17304 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcUeG&sid=PqetoDJz1fYYtRYFAAAA HTTP/1.1" 200 OK
-/home/ec2-user/TinyLLM/.venv/lib64/python3.9/site-packages/websockets/legacy/server.py:1178: DeprecationWarning: remove second argument of ws_handler
-  warnings.warn("remove second argument of ws_handler", DeprecationWarning)
-INFO:     ('42.105.140.9', 17327) - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=PqetoDJz1fYYtRYFAAAA" [accepted]
-INFO:     connection open
-INFO:     42.105.140.9:17304 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcUqs&sid=PqetoDJz1fYYtRYFAAAA HTTP/1.1" 200 OK
-INFO:     42.105.140.9:17284 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcWX4 HTTP/1.1" 200 OK
-INFO:     42.105.140.9:17284 - "POST /socket.io/?EIO=4&transport=polling&t=PTJcXcG&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
-INFO:     42.105.140.9:17318 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcXfm&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
-INFO:     ('42.105.140.9', 17298) - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=TtPGc-gT83prrNCAAAAC" [accepted]
-INFO:     connection open
-INFO:     42.105.140.9:17318 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcXm6&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
-INFO:     42.105.140.9:17318 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcXta&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
-/home/ec2-user/TinyLLM/.venv/lib64/python3.9/site-packages/websockets/exceptions.py:125: DeprecationWarning: ConnectionClosed.code is deprecated; use Protocol.close_code or ConnectionClosed.rcvd.code
-  warnings.warn(  # deprecated in 13.1 - 2024-09-21
 INFO:     connection closed
+INFO:     42.105.140.9:17307 - "GET /socket.io/?EIO=4&transport=polling&t=PTJdUKW HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17289 - "GET /version HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17307 - "POST /socket.io/?EIO=4&transport=polling&t=PTJdUPx&sid=L-tChZUh8F4tbcmbAAAC HTTP/1.1" 200 OK
+INFO:     ('42.105.140.9', 17316) - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=L-tChZUh8F4tbcmbAAAC" [accepted]
+INFO:     connection open
+INFO:     42.105.140.9:17289 - "GET /socket.io/?EIO=4&transport=polling&t=PTJdUPz&sid=L-tChZUh8F4tbcmbAAAC HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17289 - "GET /socket.io/?EIO=4&transport=polling&t=PTJdUZj&sid=L-tChZUh8F4tbcmbAAAC HTTP/1.1" 200 OK
+2025-06-09 07:35:48 INFO ERROR __init__() got an unexpected keyword argument 'proxies'
+2025-06-09 07:35:48 INFO Thread error: local variable 'completion_text' referenced before assignment
+INFO:     42.105.140.9:17308 - "GET /socket.io.js.map HTTP/1.1" 404 Not Found
+INFO:     connection closed
+INFO:     42.105.140.9:17332 - "GET / HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17287 - "GET /socket.io.js.map HTTP/1.1" 404 Not Found
+INFO:     42.105.140.9:17332 - "GET /socket.io/?EIO=4&transport=polling&t=PTJdjGC HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17322 - "GET /version HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17322 - "POST /socket.io/?EIO=4&transport=polling&t=PTJdjL3&sid=hPNfcch-_nY_8NtWAAAE HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17332 - "GET /socket.io/?EIO=4&transport=polling&t=PTJdjL4&sid=hPNfcch-_nY_8NtWAAAE HTTP/1.1" 200 OK
+INFO:     ('42.105.140.9', 17319) - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=hPNfcch-_nY_8NtWAAAE" [accepted]
+INFO:     connection open
+INFO:     42.105.140.9:17332 - "POST /socket.io/?EIO=4&transport=polling&t=PTJdjUV&sid=hPNfcch-_nY_8NtWAAAE HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17322 - "GET /socket.io/?EIO=4&transport=polling&t=PTJdjUW&sid=hPNfcch-_nY_8NtWAAAE HTTP/1.1" 200 OK
+2025-06-09 07:36:48 INFO ERROR __init__() got an unexpected keyword argument 'proxies'
+2025-06-09 07:36:48 INFO Thread error: local variable 'completion_text' referenced before assignment
