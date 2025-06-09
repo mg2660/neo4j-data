@@ -1,51 +1,25 @@
-(.venv) [ec2-user@ip-172-31-87-237 TinyLLM]$ grep -R "proxies=" .
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/adapters.py:    def get_connection_with_tls_context(self, request, verify, proxies=None, cert=None):
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/adapters.py:    def get_connection(self, url, proxies=None):
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/adapters.py:                request, verify, proxies=proxies, cert=cert
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/adapters.py:            proxies=proxies,
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/sessions.py:        proxies=None,
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/sessions.py:                    proxies=proxies,
-./.venv/lib/python3.9/site-packages/pip/_vendor/requests/sessions.py:        proxies=None,
-./.venv/lib/python3.9/site-packages/urllib3/contrib/emscripten/fetch.py:            to_js([_STREAMING_WORKER_CODE], create_pyproxies=False),
-./.venv/lib/python3.9/site-packages/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib/python3.9/site-packages/requests/adapters.py:    def get_connection(self, url, proxies=None):
-./.venv/lib/python3.9/site-packages/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib/python3.9/site-packages/requests/adapters.py:            proxies=proxies,
-./.venv/lib/python3.9/site-packages/requests/sessions.py:        proxies=None,
-./.venv/lib/python3.9/site-packages/requests/sessions.py:                    proxies=proxies,
-./.venv/lib/python3.9/site-packages/requests/sessions.py:        proxies=None,
-./.venv/lib/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib/python3.9/site-packages/openai/cli/_cli.py:        proxies=proxies or None,
-./.venv/lib/python3.9/site-packages/openai-1.3.7.dist-info/METADATA:        proxies="http://my.test.proxy.example.com",
-./.venv/lib/python3.9/site-packages/weaviate/client_executor.py:            proxies=config.proxies,
-./.venv/lib/python3.9/site-packages/weaviate/connect/v4.py:            proxies=self._proxies,
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/adapters.py:    def get_connection_with_tls_context(self, request, verify, proxies=None, cert=None):
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/adapters.py:    def get_connection(self, url, proxies=None):
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/adapters.py:                request, verify, proxies=proxies, cert=cert
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/adapters.py:            proxies=proxies,
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/sessions.py:        proxies=None,
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/sessions.py:                    proxies=proxies,
-./.venv/lib64/python3.9/site-packages/pip/_vendor/requests/sessions.py:        proxies=None,
-./.venv/lib64/python3.9/site-packages/urllib3/contrib/emscripten/fetch.py:            to_js([_STREAMING_WORKER_CODE], create_pyproxies=False),
-./.venv/lib64/python3.9/site-packages/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib64/python3.9/site-packages/requests/adapters.py:    def get_connection(self, url, proxies=None):
-./.venv/lib64/python3.9/site-packages/requests/adapters.py:        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
-./.venv/lib64/python3.9/site-packages/requests/adapters.py:            proxies=proxies,
-./.venv/lib64/python3.9/site-packages/requests/sessions.py:        proxies=None,
-./.venv/lib64/python3.9/site-packages/requests/sessions.py:                    proxies=proxies,
-./.venv/lib64/python3.9/site-packages/requests/sessions.py:        proxies=None,
-./.venv/lib64/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib64/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib64/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib64/python3.9/site-packages/openai/_base_client.py:            proxies=proxies,
-./.venv/lib64/python3.9/site-packages/openai/cli/_cli.py:        proxies=proxies or None,
-./.venv/lib64/python3.9/site-packages/openai-1.3.7.dist-info/METADATA:        proxies="http://my.test.proxy.example.com",
-./.venv/lib64/python3.9/site-packages/weaviate/client_executor.py:            proxies=config.proxies,
-./.venv/lib64/python3.9/site-packages/weaviate/connect/v4.py:            proxies=self._proxies,
+2025-06-09 07:31:24 INFO SwarmUI server (http://localhost:7801) not reachable: HTTPConnectionPool(host='localhost', port=7801): Max retries exceeded with url: /API/GetNewSession (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f69c7fc7490>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-06-09 07:31:24 INFO Image generator not available - set SwarmUI server using SWARMUI environment variable
+INFO:     Started server process [7879]
+INFO:     Waiting for application startup.
+2025-06-09 07:31:24 INFO Starting chatbot...
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     42.105.140.9:17325 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcU0y HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17325 - "POST /socket.io/?EIO=4&transport=polling&t=PTJcUeE&sid=PqetoDJz1fYYtRYFAAAA HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17304 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcUeG&sid=PqetoDJz1fYYtRYFAAAA HTTP/1.1" 200 OK
+/home/ec2-user/TinyLLM/.venv/lib64/python3.9/site-packages/websockets/legacy/server.py:1178: DeprecationWarning: remove second argument of ws_handler
+  warnings.warn("remove second argument of ws_handler", DeprecationWarning)
+INFO:     ('42.105.140.9', 17327) - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=PqetoDJz1fYYtRYFAAAA" [accepted]
+INFO:     connection open
+INFO:     42.105.140.9:17304 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcUqs&sid=PqetoDJz1fYYtRYFAAAA HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17284 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcWX4 HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17284 - "POST /socket.io/?EIO=4&transport=polling&t=PTJcXcG&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17318 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcXfm&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
+INFO:     ('42.105.140.9', 17298) - "WebSocket /socket.io/?EIO=4&transport=websocket&sid=TtPGc-gT83prrNCAAAAC" [accepted]
+INFO:     connection open
+INFO:     42.105.140.9:17318 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcXm6&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
+INFO:     42.105.140.9:17318 - "GET /socket.io/?EIO=4&transport=polling&t=PTJcXta&sid=TtPGc-gT83prrNCAAAAC HTTP/1.1" 200 OK
+/home/ec2-user/TinyLLM/.venv/lib64/python3.9/site-packages/websockets/exceptions.py:125: DeprecationWarning: ConnectionClosed.code is deprecated; use Protocol.close_code or ConnectionClosed.rcvd.code
+  warnings.warn(  # deprecated in 13.1 - 2024-09-21
+INFO:     connection closed
