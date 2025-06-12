@@ -1,14 +1,66 @@
-
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+type Intent =
+  | 'greeting'
+  | 'farewell'
+  | 'help'
+  | 'structured_event'
+  | 'network_command'
+  | 'general_query'
+  | 'unknown';
+const intentKeywords = {
+  greeting: ['hi', 'hello', 'hey'],
+  farewell: ['bye', 'goodbye', 'see you'],
+  help: ['help', 'support', 'assist'],
+  network_command: ['show routes', 'get paths', 'network'],
+  structured_event: ['organize', 'host', 'plan', 'schedule', 'gaming event', 'tournament', 'match'],
+};
+function classifyIntent(message: string): Intent {
+  const normalized = message.toLowerCase().replace(/\s+/g, ' ').trim();
+  for (const [intent, keywords] of Object.entries(intentKeywords)) {
+    if (keywords.some(keyword => normalized.includes(keyword))) {
+      return intent as Intent;
+    }
+  }
+  if (normalized.length > 10) return 'general_query';
+  return 'unknown';
+}
+async function extractEntitiesWithLLM(userMessage: string): Promise<any> {
+  try {
+    const payload = {
+      model: "mistral-7b-instruct-v0.1.Q3_K_M.gguf",
+      messages: [
+        {
+          role: "system",
+          content: "Extract structured details from the user's message about a gaming event. Return a JSON object with keys: eventType, location, startDate, endDate, playerCount."
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
+      ],
+      max_tokens: 150,
+      temperature: 0.0
+    };
 
+    const res = await fetch("http://35.171.185.203:8000/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
+    const data = await res.json();
+    return JSON.parse(data.choices?.[0]?.message?.content || '{}');
+  } catch (error) {
+    console.error("Entity extraction failed:", error);
+    return null;
+  }
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 export class AppComponent implements OnInit {
   title = 'DSM';
   chatWindowOpen = false;
@@ -25,6 +77,7 @@ export class AppComponent implements OnInit {
   modalImageUrl: string | null = null;
   lessThan500Summary: any[] = [];
   moreThan500Summary: any[] = [];
+  invoiceShown = false;
 
 
 openImageModal(url: string): void {
@@ -62,182 +115,269 @@ closeImageModal(): void {
     setTimeout(() => this.scrollToBottom(), 100);
   }
 
+
   sendMessage() {
     if (this.newMessage.trim()) {
       const userMessage = this.newMessage.trim();
       this.messages.push({ text: userMessage, sender: "user" });
       this.newMessage = '';
-      this.processing = true; // Show typing indicator
       this.scrollToBottom();
 
-      setTimeout(() => {
-        if (this.awaitingResponse) {
-          this.handleMissingInfo(userMessage.toLowerCase());
-        } else {
-          this.handlePredefinedMessages(userMessage.toLowerCase());
-        }
+      this.processing = true;
 
-        this.processing = false; // Hide typing indicator
-        this.scrollToBottom();
-      }, 1200); // 1.2 seconds delay
+      if (this.awaitingResponse) {
+        this.handleMissingInfo(userMessage); // ✅ Route to missing info handler
+        this.processing = false;
+      } else {
+        this.handlePredefinedMessages(userMessage); // ✅ Route to general handler
+      }
     }
   }
 
-  handlePredefinedMessages(message: string) {
+
+  handleConfirmation(message: string) {
+    const lower = message.toLowerCase();
+    if (['yes', 'y', 'confirm', 'okay', 'ok', 'sure'].includes(lower)) {
+      this.messages.push({
+        sender: 'bot',
+        text: `🎉 Awesome! Your gaming event has been successfully scheduled on Game-X. We'll keep you updated with the next steps.`
+      });
+      this.awaitingResponse = null;
+      this.confirmationShown = false;
+      this.eventDetails = {}; // Optionally reset for next event
+    } else {
+      this.messages.push({
+        sender: 'bot',
+        text: `❓ No worries! If you'd like to make changes, just let me know what you'd like to update.`
+      });
+      this.awaitingResponse = null;
+      this.confirmationShown = false;
+    }
+
+    this.scrollToBottom();
+  }
+
+
+  async handlePredefinedMessages(message: string) {
+    const normalizedMessage = message.toLowerCase().replace(/\s+/g, ' ').trim();
+    const intent = classifyIntent(normalizedMessage);
     let response = '';
-    switch (message) {
-      case 'hi':
+
+    switch (intent) {
+      case 'greeting':
         response = 'Hi there! How can I assist you today?';
         break;
-      case 'bye':
+      case 'farewell':
         response = 'Goodbye! Have a great day!';
-        break;
-      case 'how are you':
-        response = 'I am just a bot, but I am here to help you!';
-        break;
-      case 'what is your name':
-        response = 'I am GameXBot, your friendly assistant!';
         break;
       case 'help':
         response = 'Sure! I can assist you with gaming, tournaments. What do you need help with?';
         break;
-      case 'get intent':
-      case 'intent':
-      case 'show intent':
-        this.getRecentIntent();
-        return;
-      case 'show network paths':
-      case 'show network routes':
-      case 'show routes':
-      case 'get routes':
-      case 'get paths':
+      case 'network_command':
         this.getNetworkPaths();
+        this.processing = false;
+        return;
+      case 'structured_event':
+        await this.extractEventDetails(message);
+        this.processing = false;
+        return;
+      case 'general_query':
+        await this.queryLLM(message);
+        this.processing = false;
         return;
       default:
-        this.extractEventDetails(message);
+        if (this.awaitingResponse) {
+          await this.extractEventDetails(message);
+        } else {
+          await this.queryLLM(message);
+        }
+        this.processing = false;
         return;
     }
+
     this.messages.push({ text: response, sender: "bot" });
+    this.processing = false;
     this.scrollToBottom();
   }
 
-  extractEventDetails(message: string) {
-    const eventTypeRegex = /(?:host|organize).*?(\w+)\s+event/i;
-    const eventTypeMatch = message.match(eventTypeRegex);
+  async extractEventDetails(message: string) {
+    const details = await extractEntitiesWithLLM(message);
 
-    if (eventTypeMatch) {
-      const eventType = eventTypeMatch[1].toLowerCase();
-      if (eventType !== 'gaming') {
-        this.messages.push({
-          text: `⚠️ Sorry, we cannot host <strong>${eventType}</strong> events here.<br>
-  We currently support only <strong>gaming</strong> events.`,
-          sender: "bot"
-        });
-        this.scrollToBottom();
-        return;
+    if (!details) {
+      this.messages.push({
+        text: "🤖 Sorry, I couldn't understand that. Could you rephrase?",
+        sender: "bot"
+      });
+      this.scrollToBottom();
+      return;
+    }
+
+    // Validate and normalize event type
+    if (!this.validateEventType(details.eventType)) {
+      return this.rejectEventType(details.eventType);
+    }
+
+
+    // Validate location if provided
+    if (details.location) {
+      if (!this.validateLocation(details.location)) {
+        return this.rejectLocation(details.location);
       }
     }
 
-    const locationRegex = /(?:in|on|at)\s+([a-zA-Z\s]+)/i;
-    const dateRegex = /(\d{1,2}(?:st|nd|rd|th)?(?:\s+|\/|-)(?:[a-zA-Z]+|\d{1,2})(?:\s+|\/|-)\d{4})/gi;
-    const playerCountRegex = /(?:for|with)\s+(\d+)\s+players?/i;
-
-    const locationMatch = message.match(locationRegex);
-    const dateMatches = message.match(dateRegex);
-    const playerCountMatch = message.match(playerCountRegex);
-
-    if (locationMatch) {
-      const location = locationMatch[1].trim();
-      if (location.toLowerCase() !== 'riyadh') {
-        this.awaitingResponse = null;
-        this.messages.push({
-          text: "📍 Sorry! Currently, we are not available in this location.",
-          sender: "bot"
-        });
-        this.scrollToBottom();
-        return;
-      }
-      this.eventDetails.location = location;
-    }
-
-    if (dateMatches && dateMatches.length >= 2) {
-      this.eventDetails.startDate = this.formatDateToDDMMYYYY(dateMatches[0]);
-      this.eventDetails.endDate = this.formatDateToDDMMYYYY(dateMatches[1]);
-    } else if (dateMatches && dateMatches.length === 1) {
-      if (!this.eventDetails.startDate) {
-        this.eventDetails.startDate = this.formatDateToDDMMYYYY(dateMatches[0]);
-      } else if (!this.eventDetails.endDate) {
-        this.eventDetails.endDate = this.formatDateToDDMMYYYY(dateMatches[0]);
+    // Validate player count if provided
+    if (details.playerCount !== undefined && details.playerCount !== null) {
+      if (!this.validatePlayerCount(details.playerCount)) {
+        return this.rejectPlayerCount(details.playerCount);
       }
     }
 
-    if (playerCountMatch) {
-      const count = parseInt(playerCountMatch[1], 10);
-      if (count > 1000) {
-        this.messages.push({
-          text: `🎮 Whoa! That’s a full-blown battle royale!<br>
-  We can only host up to <strong>1000 players</strong>.<br>
-  Ready to trim the squad?`,
-          sender: "bot"
-        });
-        this.scrollToBottom();
-        return;
-      }
-      this.eventDetails.playerCount = playerCountMatch[1];
-    }
+    // Merge valid details into eventDetails
+    this.eventDetails = { ...this.eventDetails, ...details };
 
-    if (!this.eventDetails.location) {
+    // Prompt for missing fields
+    this.promptForMissingDetails();
+  }
+
+
+  validateEventType(type: string) {
+    if (type?.toLowerCase().includes('gaming')) {
+      this.eventDetails.eventType = 'gaming';
+      return true;
+    }
+    return false;
+  }
+
+  rejectEventType(type: string) {
+    this.messages.push({
+      text: `⚠️ Sorry, we cannot host <strong>${type}</strong> events. We currently support only <strong>gaming</strong> events.`,
+      sender: "bot"
+    });
+    this.scrollToBottom();
+  }
+
+  validateLocation(location: string) {
+    const validLocations = ['riyadh'];
+    return validLocations.includes(location?.toLowerCase());
+  }
+
+  rejectLocation(location: string) {
+    this.awaitingResponse = null;
+    this.messages.push({
+      text: "📍 Sorry! Currently, we are not available in this location.",
+      sender: "bot"
+    });
+    this.scrollToBottom();
+  }
+
+  validatePlayerCount(count: number) {
+    return count && count <= 1000;
+  }
+
+  rejectPlayerCount(count: number) {
+    this.messages.push({
+      text: `🎮 Whoa! That’s a full-blown battle royale! We can only host up to <strong>1000 players</strong>. Ready to trim the squad?`,
+      sender: "bot"
+    });
+    this.scrollToBottom();
+  }
+
+  promptForMissingDetails() {
+    const { eventType, location, startDate, endDate, playerCount } = this.eventDetails;
+
+    if (!eventType) {
+      this.awaitingResponse = 'eventType';
+      this.messages.push({
+        text: `🎮 What type of gaming event are you planning to host?`,
+        sender: "bot"
+      });
+    } else if (!location) {
       this.awaitingResponse = 'location';
       this.messages.push({
-        text: `🗺️ Got it! You're looking to host a gaming event.<br>
+        text: `🗺️ Got it! You're planning a ${eventType} event.<br>
   Could you please confirm the <strong>primary location</strong> for your event?`,
         sender: "bot"
       });
-    } else if (!this.eventDetails.startDate && !this.eventDetails.endDate) {
+    } else if (!startDate && !endDate) {
       this.awaitingResponse = 'startAndEndDate';
       this.messages.push({
-        text: `📅 Excellent! Riyadh it is.<br>
+        text: `📅 Excellent! ${location} it is.<br>
   Now, could you provide the <strong>start and end dates</strong> for your event?<br>
-  (e.g., DD/MM/YYYY - DD/MM/YYYY)`,
+  (e.g., 04/07/2025 - 06/07/2025)`,
         sender: "bot"
       });
-    } else if (!this.eventDetails.startDate) {
+    } else if (!startDate) {
       this.awaitingResponse = 'startDate';
       this.messages.push({
         text: `📆 Thanks! Could you please provide the <strong>start date</strong> for the event?`,
         sender: "bot"
       });
-    } else if (!this.eventDetails.endDate) {
+    } else if (!endDate) {
       this.awaitingResponse = 'endDate';
       this.messages.push({
         text: `📆 Got it. Could you now provide the <strong>end date</strong> for the event?`,
         sender: "bot"
       });
-    } else if (!this.eventDetails.playerCount) {
+    } else if (playerCount === undefined || playerCount === null)      {
       this.awaitingResponse = 'playerCount';
       this.messages.push({
         text: `👥 Could you tell me the <strong>estimated number of players</strong> you anticipate at peak?`,
         sender: "bot"
       });
     } else {
-      const confirmationMessage = `
-  ✅ Alright, let's confirm your request:<br><br>
-  • <strong>Event Type:</strong> Gaming Event<br>
-  • <strong>Location:</strong> ${this.eventDetails.location}<br>
-  • <strong>Dates:</strong> ${this.eventDetails.startDate} - ${this.eventDetails.endDate}<br>
-  • <strong>Estimated Players:</strong> ${this.eventDetails.playerCount}<br><br>
-  Does this sound correct to you?`;
-
+      this.awaitingResponse = 'confirmation';
+      this.confirmationShown = true;
       this.messages.push({
         sender: 'GameX Assistant',
-        text: confirmationMessage
+        text: `
+  ✅ Alright, let's confirm your request:<br><br>
+  • <strong>Event Type:</strong> ${eventType}<br>
+  • <strong>Location:</strong> ${location}<br>
+  • <strong>Dates:</strong> ${startDate} - ${endDate}<br>
+  • <strong>Estimated Players:</strong> ${playerCount}<br><br>
+  Does this sound correct to you?`
       });
-
-      this.confirmationShown = true;
-      this.awaitingResponse = 'confirmation';
     }
 
     this.scrollToBottom();
+  }
+
+
+  async queryLLM(userMessage: string) {
+    this.processing = true;
+    const payload = {
+      model: "mistral-7b-instruct-v0.1.Q3_K_M.gguf",
+      messages: [
+        {
+          role: "system",
+          content: "You are an online gaming event organiser assistant for platform called Game-X. Game-X platform provides infrastructure for organising gaming events on intent based Autonomous Network."
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
+      ],
+      max_tokens: 100,
+      temperature: 0.0
+    };
+
+    try {
+      const res = await fetch("http://35.171.185.203:8000/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      const botReply = data.choices?.[0]?.message?.content || "Sorry, I couldn't understand that.";
+      this.messages.push({ text: botReply, sender: "bot" });
+    } catch (error) {
+      console.error("LLM request failed:", error);
+      this.messages.push({ text: "Oops! Something went wrong while contacting the assistant.", sender: "bot" });
+    } finally {
+      this.processing = false;
+      this.scrollToBottom();
+    }
   }
 
 
@@ -311,6 +451,15 @@ closeImageModal(): void {
     const normalizedInput = userInput.toLowerCase();
 
     switch (this.awaitingResponse) {
+      case 'eventType':
+        if (this.validateEventType(userInput)) {
+          this.eventDetails.eventType = 'gaming';
+        } else {
+          this.rejectEventType(userInput);
+          return;
+        }
+        break;
+
       case 'confirmation':
         if (normalizedInput === 'yes') {
           this.awaitingResponse = null;
@@ -449,8 +598,8 @@ closeImageModal(): void {
 
     this.awaitingResponse = null;
 
-    if (!this.confirmationShown) {
-      this.extractEventDetails('');
+    if (!this.confirmationShown && Object.keys(this.eventDetails).length > 0) {
+      this.promptForMissingDetails();
     }
   }
 
