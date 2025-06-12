@@ -42,7 +42,6 @@ async function extractEntitiesWithLLM(userMessage: string): Promise<any> {
       max_tokens: 150,
       temperature: 0.0
     };
-
     const res = await fetch("http://35.171.185.203:8000/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -77,7 +76,12 @@ export class AppComponent implements OnInit {
   modalImageUrl: string | null = null;
   lessThan500Summary: any[] = [];
   moreThan500Summary: any[] = [];
-  invoiceShown = false;
+  //invoiceShown = false;
+  previousUserMessage: string = '';
+  //eventDetails: any = {};
+awaitingMissingFields: boolean = false;
+awaitingConfirmation: boolean = false;
+awaitingConversionConfirmation: boolean = false;
 
 
 openImageModal(url: string): void {
@@ -115,24 +119,121 @@ closeImageModal(): void {
     setTimeout(() => this.scrollToBottom(), 100);
   }
 
+  async extractEntitiesWithLLM(userMessage: string): Promise<any> {
+    const payload = {
+      model: "mistral-7b-instruct-v0.1.Q3_K_M.gguf",
+      messages: [
+        {
+          role: "system",
+          content: `Extract details ONLY if the user is talking about a *gaming* event.
+  Return a JSON with: eventType, location, startDate, endDate, playerCount.
+  If it's not a gaming event, respond with: { "eventType": "non-gaming" }`
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
+      ],
+      max_tokens: 100,
+      temperature: 0.0
+    };
 
-  sendMessage() {
-    if (this.newMessage.trim()) {
-      const userMessage = this.newMessage.trim();
-      this.messages.push({ text: userMessage, sender: "user" });
-      this.newMessage = '';
-      this.scrollToBottom();
+    try {
+      const res = await fetch("http://35.171.185.203:8000/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-      this.processing = true;
-
-      if (this.awaitingResponse) {
-        this.handleMissingInfo(userMessage); // ✅ Route to missing info handler
-        this.processing = false;
-      } else {
-        this.handlePredefinedMessages(userMessage); // ✅ Route to general handler
-      }
+      const data = await res.json();
+      const content = data.choices?.[0]?.message?.content;
+      return JSON.parse(content); // Assuming the response is a clean JSON string
+    } catch (err) {
+      console.error("Entity extraction failed:", err);
+      return null;
     }
   }
+
+  async sendMessage(userMessage: string) {
+    if (!userMessage.trim()) return;
+
+    this.messages.push({ text: userMessage, sender: "user" });
+    //this.userInput='';
+    // 💬 Handle confirmation for non-gaming to gaming conversion
+    if (this.awaitingConversionConfirmation) {
+      if (userMessage.toLowerCase().includes("yes")) {
+        this.awaitingConversionConfirmation = false;
+        this.messages.push({ text: "✅ Let's convert it to a gaming event! Please provide the event details.", sender: "bot" });
+      } else {
+        this.awaitingConversionConfirmation = false;
+        this.messages.push({ text: "👍 Alright. Let me know if you need help with anything else.", sender: "bot" });
+      }
+      return;
+    }
+
+    // ⏳ Collect missing fields
+    if (this.awaitingMissingFields) {
+      const newEntities = await this.extractEntitiesWithLLM(userMessage);
+      this.eventDetails = { ...this.eventDetails, ...newEntities };
+
+      const stillMissing = this.promptForMissingDetails(this.eventDetails);
+      if (stillMissing) {
+        this.messages.push({ text: `Still need these details:\n${stillMissing}`, sender: "bot" });
+      } else {
+        this.awaitingMissingFields = false;
+        this.awaitingConfirmation = true;
+
+        const e = this.eventDetails;
+        this.messages.push({
+          text: `🎮 All set! Should I create a ${e.eventType} event in ${e.location} on ${new Date(e.startDate).toLocaleString()} for ${e.playerCount} players? (yes/no)`,
+          sender: "bot"
+        });
+      }
+      return;
+    }
+
+    // ✅ Confirm before creation
+    if (this.awaitingConfirmation) {
+      if (userMessage.toLowerCase().includes("yes")) {
+        this.awaitingConfirmation = false;
+        this.messages.push({ text: "✅ Your event has been created successfully 🎉", sender: "bot" });
+        this.eventDetails = {};
+      } else {
+        this.awaitingConfirmation = false;
+        this.messages.push({ text: "❌ Event creation cancelled. Let me know if you want to try again.", sender: "bot" });
+      }
+      return;
+    }
+
+    // 🤖 Try extracting event entities
+    const extracted = await this.extractEntitiesWithLLM(userMessage);
+
+    // 🎤 Handle non-gaming case
+    if (extracted?.eventType === "non-gaming") {
+      this.awaitingConversionConfirmation = true;
+      this.messages.push({ text: "🎤 That looks like a non-gaming event. GameX only supports gaming events. Want to convert this to a gaming event?", sender: "bot" });
+      return;
+    }
+
+    // ❓ Prompt for missing data
+    const missingPrompt = this.promptForMissingDetails(extracted);
+    if (missingPrompt) {
+      this.eventDetails = { ...this.eventDetails, ...extracted };
+      this.awaitingMissingFields = true;
+      this.messages.push({ text: `I need a few more details to proceed:\n${missingPrompt}`, sender: "bot" });
+      return;
+    }
+
+    // ✅ All data is present
+    this.eventDetails = extracted;
+    this.awaitingConfirmation = true;
+    this.messages.push({
+      text: `🎮 Got it! Should I create a ${extracted.eventType} event in ${extracted.location} on ${new Date(extracted.startDate).toLocaleString()} for ${extracted.playerCount} players? (yes/no)`,
+      sender: "bot"
+    });
+  }
+
+
 
 
   handleConfirmation(message: string) {
@@ -200,6 +301,50 @@ closeImageModal(): void {
     this.scrollToBottom();
   }
 
+  // extractEntitiesWithLLM(userMessage: string): Promise<any> {
+  //   const payload = {
+  //     model: "mistral-7b-instruct-v0.1.Q3_K_M.gguf",
+  //     messages: [
+  //       {
+  //         role: "system",
+  //         content: `You are an event assistant on Game-X. Extract details from the user message *only* if it's about a gaming event.
+  // Return a JSON with the following keys:
+  // - eventType: string
+  // - location: string
+  // - startDate: ISO 8601 datetime (e.g., 2025-06-15T12:00:00)
+  // - endDate: ISO 8601 datetime
+  // - playerCount: number
+
+  // If it's not a gaming event (e.g., music, comedy, etc.), return: { "eventType": "non-gaming" }`
+  //       },
+  //       {
+  //         role: "user",
+  //         content: userMessage
+  //       }
+  //     ],
+  //     max_tokens: 300,
+  //     temperature: 0.2
+  //   };
+
+  //   return fetch("http://localhost:11434/api/chat", {
+  //     method: "POST",
+  //     body: JSON.stringify(payload),
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     }
+  //   })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     try {
+  //       return JSON.parse(data.choices[0].message.content);
+  //     } catch (err) {
+  //       console.error("❌ Failed to parse LLM JSON:", err, data.choices[0].message.content);
+  //       return {};
+  //     }
+  //   });
+  // }
+
+
   async extractEventDetails(message: string) {
     const details = await extractEntitiesWithLLM(message);
 
@@ -236,7 +381,7 @@ closeImageModal(): void {
     this.eventDetails = { ...this.eventDetails, ...details };
 
     // Prompt for missing fields
-    this.promptForMissingDetails();
+    this.promptForMissingDetails(this.eventDetails);
   }
 
 
@@ -281,84 +426,89 @@ closeImageModal(): void {
     });
     this.scrollToBottom();
   }
+  promptForMissingDetails(eventDetails: any): string {
+    const questions = [];
 
-  promptForMissingDetails() {
-    const { eventType, location, startDate, endDate, playerCount } = this.eventDetails;
+    if (!eventDetails.location) questions.push("📍 Where will the event take place?");
+    if (!eventDetails.startDate) questions.push("📅 When is the event scheduled to start?");
+    if (!eventDetails.endDate) questions.push("🕒 When will the event end?");
+    if (!eventDetails.playerCount) questions.push("👥 How many players are expected?");
+    if (!eventDetails.eventType || eventDetails.eventType === "non-gaming") questions.push("🎮 What type of gaming event is it (e.g., FPS, Battle Royale)?");
 
-    if (!eventType) {
-      this.awaitingResponse = 'eventType';
-      this.messages.push({
-        text: `🎮 What type of gaming event are you planning to host?`,
-        sender: "bot"
-      });
-    } else if (!location) {
-      this.awaitingResponse = 'location';
-      this.messages.push({
-        text: `🗺️ Got it! You're planning a ${eventType} event.<br>
-  Could you please confirm the <strong>primary location</strong> for your event?`,
-        sender: "bot"
-      });
-    } else if (!startDate && !endDate) {
-      this.awaitingResponse = 'startAndEndDate';
-      this.messages.push({
-        text: `📅 Excellent! ${location} it is.<br>
-  Now, could you provide the <strong>start and end dates</strong> for your event?<br>
-  (e.g., 04/07/2025 - 06/07/2025)`,
-        sender: "bot"
-      });
-    } else if (!startDate) {
-      this.awaitingResponse = 'startDate';
-      this.messages.push({
-        text: `📆 Thanks! Could you please provide the <strong>start date</strong> for the event?`,
-        sender: "bot"
-      });
-    } else if (!endDate) {
-      this.awaitingResponse = 'endDate';
-      this.messages.push({
-        text: `📆 Got it. Could you now provide the <strong>end date</strong> for the event?`,
-        sender: "bot"
-      });
-    } else if (playerCount === undefined || playerCount === null)      {
-      this.awaitingResponse = 'playerCount';
-      this.messages.push({
-        text: `👥 Could you tell me the <strong>estimated number of players</strong> you anticipate at peak?`,
-        sender: "bot"
-      });
-    } else {
-      this.awaitingResponse = 'confirmation';
-      this.confirmationShown = true;
-      this.messages.push({
-        sender: 'GameX Assistant',
-        text: `
-  ✅ Alright, let's confirm your request:<br><br>
-  • <strong>Event Type:</strong> ${eventType}<br>
-  • <strong>Location:</strong> ${location}<br>
-  • <strong>Dates:</strong> ${startDate} - ${endDate}<br>
-  • <strong>Estimated Players:</strong> ${playerCount}<br><br>
-  Does this sound correct to you?`
-      });
-    }
-
-    this.scrollToBottom();
+    return questions.join("\n");
   }
 
+  // promptForMissingDetails() {
+  //   const { eventType, location, startDate, endDate, playerCount } = this.eventDetails;
 
-  async queryLLM(userMessage: string) {
+  //   if (!eventType) {
+  //     this.awaitingResponse = 'eventType';
+  //     this.messages.push({
+  //       text: `🎮 What type of gaming event are you planning to host?`,
+  //       sender: "bot"
+  //     });
+  //   } else if (!location) {
+  //     this.awaitingResponse = 'location';
+  //     this.messages.push({
+  //       text: `🗺️ Got it! You're planning a ${eventType} event.<br>
+  // Could you please confirm the <strong>primary location</strong> for your event?`,
+  //       sender: "bot"
+  //     });
+  //   } else if (!startDate && !endDate) {
+  //     this.awaitingResponse = 'startAndEndDate';
+  //     this.messages.push({
+  //       text: `📅 Excellent! ${location} it is.<br>
+  // Now, could you provide the <strong>start and end dates</strong> for your event?<br>
+  // (e.g., 04/07/2025 - 06/07/2025)`,
+  //       sender: "bot"
+  //     });
+  //   } else if (!startDate) {
+  //     this.awaitingResponse = 'startDate';
+  //     this.messages.push({
+  //       text: `📆 Thanks! Could you please provide the <strong>start date</strong> for the event?`,
+  //       sender: "bot"
+  //     });
+  //   } else if (!endDate) {
+  //     this.awaitingResponse = 'endDate';
+  //     this.messages.push({
+  //       text: `📆 Got it. Could you now provide the <strong>end date</strong> for the event?`,
+  //       sender: "bot"
+  //     });
+  //   } else if (playerCount === undefined || playerCount === null)      {
+  //     this.awaitingResponse = 'playerCount';
+  //     this.messages.push({
+  //       text: `👥 Could you tell me the <strong>estimated number of players</strong> you anticipate at peak?`,
+  //       sender: "bot"
+  //     });
+  //   } else {
+  //     this.awaitingResponse = 'confirmation';
+  //     this.confirmationShown = true;
+  //     this.messages.push({
+  //       sender: 'GameX Assistant',
+  //       text: `
+  // ✅ Alright, let's confirm your request:<br><br>
+  // • <strong>Event Type:</strong> ${eventType}<br>
+  // • <strong>Location:</strong> ${location}<br>
+  // • <strong>Dates:</strong> ${startDate} - ${endDate}<br>
+  // • <strong>Estimated Players:</strong> ${playerCount}<br><br>
+  // Does this sound correct to you?`
+  //     });
+  //   }
+
+  //   this.scrollToBottom();
+  // }
+
+
+  async queryLLM(userMessage: string): Promise<string> {
     this.processing = true;
+
     const payload = {
       model: "mistral-7b-instruct-v0.1.Q3_K_M.gguf",
       messages: [
-        {
-          role: "system",
-          content: "You are an online gaming event organiser assistant for platform called Game-X. Game-X platform provides infrastructure for organising gaming events on intent based Autonomous Network."
-        },
-        {
-          role: "user",
-          content: userMessage
-        }
+        { role: "user", content: userMessage }
       ],
-      max_tokens: 100,
-      temperature: 0.0
+      max_tokens: 150,
+      temperature: 0.7
     };
 
     try {
@@ -369,16 +519,16 @@ closeImageModal(): void {
       });
 
       const data = await res.json();
-      const botReply = data.choices?.[0]?.message?.content || "Sorry, I couldn't understand that.";
-      this.messages.push({ text: botReply, sender: "bot" });
-    } catch (error) {
-      console.error("LLM request failed:", error);
-      this.messages.push({ text: "Oops! Something went wrong while contacting the assistant.", sender: "bot" });
+      return data.choices?.[0]?.message?.content || "I'm not sure how to help with that.";
+    } catch (err) {
+      console.error(err);
+      return "❌ Oops! Something went wrong while processing your request.";
     } finally {
       this.processing = false;
       this.scrollToBottom();
     }
   }
+
 
 
 
@@ -599,7 +749,7 @@ closeImageModal(): void {
     this.awaitingResponse = null;
 
     if (!this.confirmationShown && Object.keys(this.eventDetails).length > 0) {
-      this.promptForMissingDetails();
+      this.promptForMissingDetails(this.eventDetails);
     }
   }
 
@@ -920,10 +1070,12 @@ closeImageModal(): void {
   }
 
   handleKeyPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
       this.sendMessage();
     }
   }
+   
 
   formatMessage(text: string): string {
     return text;
