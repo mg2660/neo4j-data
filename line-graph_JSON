@@ -1,0 +1,165 @@
+ {
+
+    "test_run_id": "test_case_01",
+
+    "tmc_server_url": "https://tttr.com/",
+
+    "device_slot": 3,
+
+    "video_url": "http://122t.mp4",
+
+    "platform": "netflix",
+
+    "test_senario_name": "netflix Testcase 1",
+
+    "tmc_recording_start_time": "2025-04-28T23:58:00.00+00:00",
+
+    "tuning_threshold": 10,
+
+    "channel_adjust_threshold": 10,
+
+    "VQA_Analyze_time": null,
+
+    "record_for_analysis": 40,
+
+    "pre_testcase_sleep": 5,
+
+    "post_testcase_sleep": 5,
+
+    "av_freeze": {
+
+        "detect_slots": [
+
+            {
+
+                "channel_key": "100",
+
+                "starttime": "2025-04-28T23:58:00+00:00",
+
+                "endtime": "2025-04-28T23:59:30+00:00",
+
+                "duration_threshold": "3000",
+
+                "optional_metadata": {
+
+                    "area_threshold": "40"
+
+                },
+
+                "avfreeze_results": [],
+
+                "status": "PASS"
+
+            }
+
+        ]
+
+    },
+
+    "audio_silence": {
+
+        "detect_slots": [
+
+            {
+
+                "channel_key": "100",
+
+                "starttime": "2025-04-28T23:58:00+00:00",
+
+                "endtime": "2025-04-28T23:59:30+00:00",
+
+                "duration_threshold": "3000",
+
+                "optional_metadata": {
+
+                    "volume_min_threshold": "16"
+
+                },
+
+                "audio_silence": [],
+
+                "status": "PASS"
+
+            }
+
+        ]
+
+    },
+
+    "volume_threshold": {
+
+        "detect_slots": [
+
+            {
+
+                "channel_key": "100",
+
+                "starttime": "2025-04-28T23:58:00+00:00",
+
+                "endtime": "2025-04-28T23:59:30+00:00",
+
+                "duration_threshold": 3000,
+
+                "optional_metadata": {
+
+                    "volume_min_threshold": -45,
+
+                    "volume_max_threshold": -38
+
+                },
+
+                "above_volume_threshold_results": [
+
+                    {
+
+                        "start_time": "00:00:00.000",
+
+                        "end_time": "00:01:30.000"
+
+                    }
+
+                ],
+
+                "below_volume_threshold_results": [],
+
+                "status": "FAIL"
+
+            }
+
+        ]
+
+    },
+
+    "video_macroblock": {
+
+        "detect_slots": [
+
+            {
+
+                "channel_key": "100",
+
+                "starttime": "2025-04-28T23:58:00+00:00",
+
+                "endtime": "2025-04-28T23:58:10+00:00",
+
+                "duration_threshold": "1000",
+
+                "optional_metadata": {
+
+                    "quality_threshold": "0.4"
+
+                },
+
+                "video_macroblock_results": [],
+
+                "status": "PASS"
+
+            }
+
+        ]
+
+    },
+
+    "request_status": "FAIL"
+
+}
