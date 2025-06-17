@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Live Video Macroblock Graph</title>
+  <title>Live Video Macroblock Graph (Zoom + Pan)</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
   <style>
     body {
       background: #111;
@@ -18,11 +19,13 @@
   </style>
 </head>
 <body>
-  <h2>Live Video Macroblock Results</h2>
+  <h2>Live Video Macroblock Results (Zoom + Pan Enabled)</h2>
   <canvas id="macroChart" height="100"></canvas>
 
   <script>
     const ctx = document.getElementById('macroChart').getContext('2d');
+    const seenLabels = new Set();
+
     const macroChart = new Chart(ctx, {
       type: 'line',
       data: {
@@ -48,12 +51,28 @@
             min: -100,
             max: 100
           }
+        },
+        plugins: {
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x',
+            },
+            zoom: {
+              wheel: {
+                enabled: true
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x',
+            }
+          }
         }
       }
     });
 
-    // Your JSON URL here
-    const jsonURL = 'data1.json'; // Replace with actual server endpoint
+    const jsonURL = 'data1.json'; // Replace with your API endpoint or file
 
     async function fetchAndPlotData() {
       try {
@@ -70,8 +89,8 @@
             const timestamp = new Date(startTime.getTime() + timeToMillis(entry.timestamp));
             const label = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            // Avoid duplicate labels
-            if (!macroChart.data.labels.includes(label)) {
+            if (!seenLabels.has(label)) {
+              seenLabels.add(label);
               macroChart.data.labels.push(label);
               macroChart.data.datasets[0].data.push(entry.value);
             }
@@ -84,17 +103,20 @@
       }
     }
 
-    // Convert "00:01:23.000" to milliseconds
     function timeToMillis(timeStr) {
       const [h, m, s] = timeStr.split(':');
       const [sec, ms] = s.split('.');
       return (parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(sec)) * 1000 + parseInt(ms || 0);
     }
 
-    // Run on load and then every 5 minutes
+    // Load on page load + every 5 mins
     fetchAndPlotData();
-    setInterval(fetchAndPlotData, 5 * 60 * 1000); // 5 min
+    setInterval(fetchAndPlotData, 1 * 60 * 1000); // 1 min
 
+    // Optional: Reset zoom on double-click
+    document.getElementById('macroChart').ondblclick = () => {
+      macroChart.resetZoom();
+    };
   </script>
 </body>
 </html>
