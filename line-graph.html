@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Video Macroblock Graph</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      max-width: 90%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Live Video Macroblock Results</h2>
+  <canvas id="macroChart" height="100"></canvas>
+
+  <script>
+    const ctx = document.getElementById('macroChart').getContext('2d');
+    const macroChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Macroblock Value',
+          data: [],
+          borderColor: 'rgba(0, 255, 200, 0.8)',
+          backgroundColor: 'rgba(0, 255, 200, 0.2)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            title: { display: true, text: 'Time' }
+          },
+          y: {
+            title: { display: true, text: 'Value' },
+            min: -100,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // Your JSON URL here
+    const jsonURL = 'data1.json'; // Replace with actual server endpoint
+
+    async function fetchAndPlotData() {
+      try {
+        const response = await fetch(jsonURL);
+        const json = await response.json();
+
+        const slot = json.video_macroblock.detect_slots[0];
+        const startTime = new Date(slot.starttime);
+
+        const results = slot.video_macroblock_results;
+
+        if (results && results.length > 0) {
+          results.forEach(entry => {
+            const timestamp = new Date(startTime.getTime() + timeToMillis(entry.timestamp));
+            const label = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            // Avoid duplicate labels
+            if (!macroChart.data.labels.includes(label)) {
+              macroChart.data.labels.push(label);
+              macroChart.data.datasets[0].data.push(entry.value);
+            }
+          });
+
+          macroChart.update();
+        }
+      } catch (error) {
+        console.error('Error fetching JSON:', error);
+      }
+    }
+
+    // Convert "00:01:23.000" to milliseconds
+    function timeToMillis(timeStr) {
+      const [h, m, s] = timeStr.split(':');
+      const [sec, ms] = s.split('.');
+      return (parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(sec)) * 1000 + parseInt(ms || 0);
+    }
+
+    // Run on load and then every 5 minutes
+    fetchAndPlotData();
+    setInterval(fetchAndPlotData, 5 * 60 * 1000); // 5 min
+
+  </script>
+</body>
+</html>
